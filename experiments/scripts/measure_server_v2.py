@@ -36,8 +36,8 @@ import socket
 # Import core code.
 import core
 
-import model_v1 as jet
-import EKF_v1 as observer
+#import model_v1 as jet
+#import EKF_v1 as observer
 
 
 crc8 = crcmod.predefined.mkCrcFun('crc-8-maxim')
@@ -122,7 +122,9 @@ def send_inputs(device,U):
   #subprocess.call(input_string,  shell=True)
   #print("input: {}".format(input_string))
   time.sleep(0.200)
-  subprocess.run('echo "d,{:.2f}" > /dev/arduino'.format(Dn), shell=True)
+  if Dn<90:
+    subprocess.run('echo "d,{:.2f}" > /dev/arduino'.format(Dn), shell=True)
+    time.sleep(0.200)
   print("input values: {:.2f},{:.2f},{:.2f},{:.2f}".format(Vn,Fn,Qn,Dn))
 
 def is_valid(line):
@@ -298,12 +300,11 @@ Tt=Temps[4]
 Ard_out=a[1].result()   
 Is=Ard_out[0]
 v_rms=Ard_out[1] 
-U=Ard_out[2]
 Osc_out=a[2].result()
 Vrms=Osc_out[0]
 P=Osc_out[0]
 
-delta=4.0
+delta=3.0
 #print(Ts)
 #print(P)
 msg="Temperature: {:.2f} Power: {:.2f}".format(Ts,P)
@@ -350,6 +351,7 @@ while True:
         Is=Ard_out[0]
         v_rms=Ard_out[1] 
         U=Ard_out[2]
+        
         Osc_out=a[2].result()
         Vrms=Osc_out[0]
 
@@ -376,8 +378,8 @@ while True:
 
 
         if delta>t_el:
-           time.sleep(delta-t_el-tm_el)
-
+          # time.sleep(delta-t_el-tm_el)
+           time.sleep(delta-t_el)
         if KeyboardInterrupt==1:
             sys.exit(1)
 

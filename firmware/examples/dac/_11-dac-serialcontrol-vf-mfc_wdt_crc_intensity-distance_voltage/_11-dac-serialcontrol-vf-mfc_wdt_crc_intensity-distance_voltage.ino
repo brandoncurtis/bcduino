@@ -243,7 +243,7 @@ void manual_input(String input) {
       else if (input.substring(2).toFloat() < 0) {setpoint::dist=0;}
       else {
       setpoint::dist = input.substring(2).toFloat();}
-      location::delta = - location::cur_loc + setpoint::dist;
+      location::delta = -location::cur_loc + setpoint::dist;
       //Serial.println(location::delta);     
       #if DEBUG
         Serial.println("stepper distance set!");
@@ -273,13 +273,13 @@ int move_to_pos(float delt, Adafruit_StepperMotor *motor) {
       myMotor->step(20, FORWARD, DOUBLE); //// STEP SIZE calibrated 11/07/2017
       myMotor->release();
       delt=delt + 2;
-      //delay(30);
+      delay(30);
      return delt;
   } else if (delt > 0) {
-      delt=delt - 2;
       myMotor->step(20, BACKWARD, DOUBLE); 
       myMotor->release();
-      //delay(30);
+      delt=delt - 2;
+      delay(30);
     return delt;
   } else if (delt == 0) {
     return delt;
@@ -319,7 +319,7 @@ void actuate_inputs() {
   DAC_MFC.Set(mapfloat(setpoint::flowrate,0,10,0,4095),0);
 
  location::delta=move_to_pos(location::delta, myMotor);
- location::cur_loc = location::delta + setpoint::dist;
+ location::cur_loc = -location::delta + setpoint::dist;
 
    // set duty cycle
   analogWrite(PIN_PWM, mapfloat(setpoint::duty,0,100,0,255));
